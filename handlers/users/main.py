@@ -68,7 +68,7 @@ async def requests_pagination(call: types.CallbackQuery):
 @router.message(F.text == "📞Telefon raqamini o'zgartirish")
 async def phone_number(message: types.Message, state: FSMContext):
     await message.answer(
-        "Iltimos, telefon raqamingizni 901234567 formatida yuboring "
+        "Iltimos, telefon raqamingizni \+998901234567 formatida yuboring "
         "yoki *\"Telefon raqamini ulashish 📱\"* tugmasini bosing",
         reply_markup=phone_markup,
         parse_mode=ParseMode.MARKDOWN_V2,

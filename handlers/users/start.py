@@ -11,6 +11,7 @@ from keyboards.reply.buttons import phone_markup, main_markup
 from keyboards.inline.buttons import courses_markup, did_not_get_code
 from states.states import UserState
 from eskiz import SMSClient
+from pydantic_core import ValidationError
 
 router = Router()
 
@@ -21,7 +22,7 @@ async def do_start(message: types.Message, state: FSMContext):
     user = await db.select_user(telegram_id=message.from_user.id)
     if not user or not user.get("verified"):
         await message.answer(
-            f"Assalomu alaykum {make_title(full_name)}\!\n\nIltimos, telefon raqamingizni 901234567 formatida yuboring"
+            f"Assalomu alaykum {make_title(full_name)}\!\n\nIltimos, telefon raqamingizni \+998901234567 formatida yuboring"
             f" yoki *\"Telefon raqamini ulashish 📱\"* tugmasini bosing",
             parse_mode=ParseMode.MARKDOWN_V2,
             reply_markup=phone_markup,
@@ -42,8 +43,7 @@ async def do_start(message: types.Message, state: FSMContext):
 async def get_phone(message: types.Message, state: FSMContext):
     # client = SMSClient()
     # await client.get_token(config.ESKIZ_EMAIL, config.ESKIZ_PASSWORD)
-    # print(client.token)
-    phone_number = ""
+    # phone_number = ""
     if message.content_type == ContentType.CONTACT:
         phone_number = message.contact.phone_number
         if not phone_number.startswith("+"):
@@ -81,7 +81,11 @@ async def get_phone(message: types.Message, state: FSMContext):
         except Exception as error:
             print(f"Data did not send to admin: {admin}. Error: {error.__class__.__name__}: {error}")
     code = await generate_sms_code(user_id=user.get("id"))
-    await send_sms(phone_number, f"Tasdiqlash kodi: {code}")
+    # res = await client.send_sms(
+    #     mobile_phone=phone_number,
+    #     message=f"Tasdiqlash kodi: {code}",
+    # )
+    # print(res)
     await message.answer(
         f"Telefon raqamingizga yuborilgan {len(code)} ta raqamli SMS kodni kiriting:",
         reply_markup=await did_not_get_code(),
