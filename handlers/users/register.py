@@ -1,10 +1,11 @@
 from aiogram import Router, types
 from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import TelegramBadRequest
 from states.states import UserState
 from loader import db, bot
+from data import config
 from keyboards.inline.buttons import (course_detail_markup, courses_markup, are_you_sure_markup,
                                       back_markup, group_confirmation_markup)
-from keyboards.reply.buttons import main_markup
 from utils.extra_datas import get_image_url
 
 router = Router()
@@ -91,20 +92,26 @@ async def course_confirmation(call: types.CallbackQuery, state: FSMContext):
         user = await db.select_user(telegram_id=call.from_user.id)
         course_student = await db.add_course_student(course_id=data.get("course_id"), student_id=user.get("id"))
         for chat in await db.select_chats():
-            await bot.copy_message(
-                chat_id=chat.get("chat_id"),
-                from_chat_id=call.from_user.id,
-                message_id=data.get("copy_message_id"),
-                reply_markup=await group_confirmation_markup(course_student.get("id")),
-            )
+            try:
+                await bot.copy_message(
+                    chat_id=chat.get("chat_id"),
+                    from_chat_id=call.from_user.id,
+                    message_id=data.get("copy_message_id"),
+                    reply_markup=await group_confirmation_markup(course_student.get("id")),
+                )
+            except TelegramBadRequest:
+                await bot.copy_message(
+                    chat_id=config.ADMINS[0],
+                    from_chat_id=call.from_user.id,
+                    message_id=data.get("copy_message_id"),
+                    reply_markup=await group_confirmation_markup(course_student.get("id")),
+                )
         await call.message.edit_text(
             f"#{course_student.get('id')} raqamli arizangiz adminga yuborildi!✅\nTez orada siz bilan bog'lanamiz😊",
-            reply_markup=main_markup,
         )
     else:
         await call.message.edit_text(
             "Ariza yuborish bekor qilindi❌\n\nBotdan qayta foydalanish uchun /start buyrug'ini yuboring.",
-            reply_markup=main_markup,
         )
     await state.clear()
 

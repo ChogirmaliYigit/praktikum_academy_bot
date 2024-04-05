@@ -1,6 +1,6 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
-from .models import TelegramUser, Mentor, Course, CourseStudent, SMSVerification
+from .models import TelegramUser, Mentor, Course, CourseStudent, SMSVerification, Chat
 
 
 @admin.register(TelegramUser)
@@ -44,3 +44,10 @@ class SMSVerificationAdmin(ModelAdmin):
     search_fields = ("user", "code",)
     list_filter = ("is_active",)
     list_filter_submit = True
+
+
+@admin.register(Chat)
+class ChatAdmin(ModelAdmin):
+    list_display = ("chat_id",)
+    fields = list_display
+    search_fields = list_display

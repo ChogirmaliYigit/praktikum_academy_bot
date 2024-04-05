@@ -10,6 +10,7 @@ phone_markup = ReplyKeyboardMarkup(
             ),
         ],
     ],
+    resize_keyboard=True,
 )
 
 
@@ -24,4 +25,5 @@ main_markup = ReplyKeyboardMarkup(
             KeyboardButton(text="📞Telefon raqamini o'zgartirish"),
         ]
     ],
+    resize_keyboard=True,
 )

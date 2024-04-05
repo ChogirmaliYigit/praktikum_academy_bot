@@ -52,8 +52,11 @@ async def select_mentor_(call: types.CallbackQuery):
 @router.message(F.text == "📝Arizalarim")
 async def requests(message: types.Message, state: FSMContext):
     text, markup = await my_requests_markup(await db.select_course_students())
-    await message.answer(text=text, reply_markup=markup)
-    await state.set_state(UserState.my_requests)
+    if text and markup:
+        await message.answer(text=text, reply_markup=markup)
+        await state.set_state(UserState.my_requests)
+    else:
+        await message.answer("<b>Sizda faol arizalar mavjud emas</b>")
 
 
 @router.callback_query(UserState.my_requests)
