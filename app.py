@@ -22,11 +22,7 @@ def setup_middlewares(dispatcher: Dispatcher, bot: Bot) -> None:
 
 def setup_filters(dispatcher: Dispatcher) -> None:
     """FILTERS"""
-    from filters import ChatPrivateFilter
-
-    # Chat turini aniqlash uchun klassik umumiy filtr
-    # Filtrni handlers/users/__init__ -dagi har bir routerga alohida o'rnatish mumkin
-    dispatcher.message.filter(ChatPrivateFilter(chat_type=["private"]))
+    pass
 
 
 async def setup_aiogram(dispatcher: Dispatcher, bot: Bot) -> None:
@@ -40,16 +36,14 @@ async def setup_aiogram(dispatcher: Dispatcher, bot: Bot) -> None:
 async def database_connected():
     # Ma'lumotlar bazasini yaratamiz:
     await db.create()
-    # await db.drop_users()
-    await db.create_table_users()
 
 
 async def aiogram_on_startup_polling(dispatcher: Dispatcher, bot: Bot) -> None:
     from utils.set_bot_commands import set_default_commands
     from utils.notify_admins import on_startup_notify
 
-    logger.info("Database connected")
     await database_connected()
+    logger.info("Database connected")
 
     logger.info("Starting polling")
     await bot.delete_webhook(drop_pending_updates=True)
