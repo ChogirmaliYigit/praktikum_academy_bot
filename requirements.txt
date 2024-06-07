@@ -28,7 +28,7 @@ yarl==1.9.2
 asyncpg~=0.28.0
 pandas
 openpyxl==3.1.2
-django==5.0.3
+django
 django-unfold==0.21.1
 psycopg2-binary==2.9.9
 pillow==10.3.0
